@@ -29,7 +29,7 @@ tags: android
 - 所有基于事件响应的场景尽量使用 Rx 来实现，包括 View 的事件响应（可参考 [ReactiveAndroid](https://github.com/kittinunf/ReactiveAndroid)）
 - 所有调试用的 Log 请用使用 `Debug` 作为 Flag 进行输出，Release 环境下必须使用混淆去掉所有 Log 的代码
 - 上架前必须进行 **混淆** 和 **签名**
-- 使用 [Redex](https://github.com/facebook/redex) 等工具对 Dex 文件进行优化（也可使用 (redex-plugin)[https://github.com/timmutton/redex-plugin]）
+- 使用 [Redex](https://github.com/facebook/redex) 等工具对 Dex 文件进行优化（也可使用 [redex-plugin](https://github.com/timmutton/redex-plugin)）
 - 使用 [Nimbledroid](https://nimbledroid.com/) 进行应用性能分析
 - 使用 [packer-ng-plugin](https://github.com/mcxiaoke/packer-ng-plugin) 进行多渠道打包（也可考虑参考 [MultiChannelPackageTool](https://github.com/seven456/MultiChannelPackageTool) 自己实现）
 - 适当使用依赖注入（常用的模块，需要单元测试的模块）
