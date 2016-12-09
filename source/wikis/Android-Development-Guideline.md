@@ -1,11 +1,9 @@
 ---
-title: Android Development Guideline
+title: Android开发指南
 date: 2016-12-09 09:56:21
-tags: android
 ---
 
-
-# Android Development Guideline
+# Android开发指南
 
 ## 总览
 
@@ -15,8 +13,6 @@ tags: android
 - 开发前对一遍设计稿，定好所有 Dimen，尽量使用 Dimen 板
 - Multiple State Drawable 命名规则：[android-selector-chapek](https://github.com/inmite/android-selector-chapek)
 - 设计规范越完整，开发越容易工作
-
-<!-- more -->
 
 ### 开发
 - **必须写注释（行内注释，函数注释以及类注释等）**，Doc Gen 选用 [Dodoka](https://kotlinlang.org/docs/reference/kotlin-doc.html)
