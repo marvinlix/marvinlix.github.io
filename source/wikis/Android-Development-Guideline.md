@@ -187,10 +187,10 @@ internal class TestActivity: Activity() {
 ```kotlin
 if (Boolean) A else B
 
-if (Boolean) A 
+if (Boolean) A
 else B
 
-if (xxx) A 
+if (xxx) A
 else if (xxx) B
 else C
 ```
@@ -333,7 +333,7 @@ Style 与 Theme 的命名统一使用 [驼峰命名法](https://en.wikipedia.org
 <TextView
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    tools:text="Home Link" 
+    tools:text="Home Link"
     />
 ```
 
@@ -346,7 +346,7 @@ Style 与 Theme 的命名统一使用 [驼峰命名法](https://en.wikipedia.org
 |--------------| ------------------|-----------------------------|
 | Background   | `bg_`	           | `bg_splash.png`             |
 | Button       | `btn_`	           | `btn_send_pressed.9.png`    |
-| Divider      | `divider_`        | `divider_horizontal.9.png`  | 
+| Divider      | `divider_`        | `divider_horizontal.9.png`  |
 | Icon         | `ic_`	           | `ic_star.png`               |
 
 
@@ -450,4 +450,3 @@ String 命名的前缀应该能够清楚地表达它的功能职责，如，`reg
 | `msg_`             | 一般信息提示                          |
 | `title_`           | 标题提示，如，Dialog标题              |
 | `action_`          | 动作提示，如，“保存”，“取消”，“创建”  |
-
