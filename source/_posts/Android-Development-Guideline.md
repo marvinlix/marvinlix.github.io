@@ -16,6 +16,8 @@ tags: android
 - Multiple State Drawable 命名规则：[android-selector-chapek](https://github.com/inmite/android-selector-chapek)
 - 设计规范越完整，开发越容易工作
 
+<!-- more -->
+
 ### 开发
 - **必须写注释（行内注释，函数注释以及类注释等）**，Doc Gen 选用 [Dodoka](https://kotlinlang.org/docs/reference/kotlin-doc.html)
 - 善用 `TODO`，`FIXME` 进行标注
