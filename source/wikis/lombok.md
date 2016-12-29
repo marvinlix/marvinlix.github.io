@@ -3,6 +3,8 @@ title: lombok让代码更简洁
 date: 2016-12-29 17:40:26
 ---
 
+# lombok让代码更简洁
+
 #### maven依赖
 
 ```
