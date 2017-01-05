@@ -3,5 +3,6 @@ title: wikis
 layout: page
 ---
 
-* [Android开发指南](Android-Development-Guideline.html)
+* [maven依赖管理](maven-dependency.html)
+* [Android开发指南](android-development-guideline.html)
 * [lombok让代码更简洁](lombok.html)
