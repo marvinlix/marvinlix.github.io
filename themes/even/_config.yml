@@ -23,15 +23,15 @@ sidebar: false
 
 # Analytics
 ## Baidu Analytics
-baidu_analytics: Your baidu Analytics ID
+#baidu_analytics:
 ## Google Analytics
-google_analytics: Your Google Analytics ID
+#google_analytics:
 
 # Comments
 ## Duoshuo
-duoshuo_shortname: Your duoshuo ID
+#duoshuo_shortname:
 ## Disqus
-disqus_shortname: Your disqus ID
+#disqus_shortname:
 
 # Social links
 social:
