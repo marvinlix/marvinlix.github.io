@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://pybeta.com/"/>
-  <updated>2017-01-17T15:43:41.000Z</updated>
+  <updated>2017-01-18T01:24:38.000Z</updated>
   <id>http://pybeta.com/</id>
   
   <author>
@@ -20,7 +20,7 @@
     <link href="http://pybeta.com/2017/01/spring-web-application-architecture/"/>
     <id>http://pybeta.com/2017/01/spring-web-application-architecture/</id>
     <published>2017-01-17T03:29:45.000Z</published>
-    <updated>2017-01-17T15:43:41.000Z</updated>
+    <updated>2017-01-18T01:24:38.000Z</updated>
     
     <content type="html"><![CDATA[<p>每个开发人员必须理解的两件事：</p>
 <ol>
@@ -117,7 +117,7 @@
 <li>我们真的需要图层吗？</li>
 </ul>
 <p>其实原因很简单：</p>
-<p><strong>我们必须学会走路之前，我们就可以运行</strong>。</p>
+<p><strong>在搞清楚原理之前，我们就可以运行</strong>。</p>
 ]]></content>
     
     <summary type="html">
