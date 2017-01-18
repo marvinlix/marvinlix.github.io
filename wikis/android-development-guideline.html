@@ -1,0 +1,407 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="author" content="muxu"><meta name="description" content="Android开发指南总览设计定义好调色板，所有颜色只能从调色板中获取，任何地方都应该避免硬编码图标可以考虑使用流行图标字体库（Fontawesome）开发前对一遍设计稿，定好所有Dimen，尽量使用Dimen板MultipleStateDrawable命"><title>Android开发指南 · Muxu</title><link rel="icon" href="/favicon.ico"><link rel="canonical" href="http://pybeta.com/wikis/android-development-guideline.html"><link rel="alternate" href="/atom.xml" title="Muxu"><link rel="stylesheet" href="/css/style.css"></head><body><div id="main"><header><a href="/." class="logo">Muxu</a><ul class="nav"><li class="nav-link"><a href="/" target="_self">Home</a></li><li class="nav-link"><a href="/archives/" target="_self">Archives</a></li><li class="nav-link"><a href="/wikis/" target="_self">Wikis</a></li><li class="nav-link"><a href="/about/" target="_self">About</a></li></ul></header><section id="container"><article class="post"><article class="post-block"><div class="post-content"><h1 id="Android开发指南"><a href="#Android开发指南" class="headerlink" title="Android开发指南"></a>Android开发指南</h1><h2 id="总览"><a href="#总览" class="headerlink" title="总览"></a>总览</h2><h3 id="设计"><a href="#设计" class="headerlink" title="设计"></a>设计</h3><ul>
+<li>定义好调色板，所有颜色 <strong>只能</strong> 从调色板中获取，任何地方都应该避免硬编码</li>
+<li>图标可以考虑使用流行图标字体库（Fontawesome）</li>
+<li>开发前对一遍设计稿，定好所有 Dimen，尽量使用 Dimen 板</li>
+<li>Multiple State Drawable 命名规则：<a href="https://github.com/inmite/android-selector-chapek" target="_blank" rel="external">android-selector-chapek</a></li>
+<li>设计规范越完整，开发越容易工作</li>
+</ul>
+<h3 id="开发"><a href="#开发" class="headerlink" title="开发"></a>开发</h3><ul>
+<li><strong>必须写注释（行内注释，函数注释以及类注释等）</strong>，Doc Gen 选用 <a href="https://kotlinlang.org/docs/reference/kotlin-doc.html" target="_blank" rel="external">Dodoka</a></li>
+<li>善用 <code>TODO</code>，<code>FIXME</code> 进行标注</li>
+<li>必须写单元测试（View / Model 层都需要）</li>
+<li>使用 CI（持续集成）进行远程构建</li>
+<li>使用 Lint 工具进行代码静态检查</li>
+<li>收集各种常用 Lib （log, bugly, …）</li>
+<li>可以添加多一层 <strong>Lib 层</strong>，用来对大多数第三方库进行一层包裹（Wrap），方便日后更换或拓展</li>
+<li>所有基于事件响应的场景尽量使用 Rx 来实现，包括 View 的事件响应（可参考 <a href="https://github.com/kittinunf/ReactiveAndroid" target="_blank" rel="external">ReactiveAndroid</a>）</li>
+<li>所有调试用的 Log 请用使用 <code>Debug</code> 作为 Flag 进行输出，Release 环境下必须使用混淆去掉所有 Log 的代码</li>
+<li>上架前必须进行 <strong>混淆</strong> 和 <strong>签名</strong></li>
+<li>使用 <a href="https://github.com/facebook/redex" target="_blank" rel="external">Redex</a> 等工具对 Dex 文件进行优化（也可使用 <a href="https://github.com/timmutton/redex-plugin" target="_blank" rel="external">redex-plugin</a>）</li>
+<li>使用 <a href="https://nimbledroid.com/" target="_blank" rel="external">Nimbledroid</a> 进行应用性能分析</li>
+<li>使用 <a href="https://github.com/mcxiaoke/packer-ng-plugin" target="_blank" rel="external">packer-ng-plugin</a> 进行多渠道打包（也可考虑参考 <a href="https://github.com/seven456/MultiChannelPackageTool" target="_blank" rel="external">MultiChannelPackageTool</a> 自己实现）</li>
+<li>适当使用依赖注入（常用的模块，需要单元测试的模块）</li>
+<li><strong>使用 Fragment 来构建页面内容，Activity 只用来管理 Fragment</strong></li>
+<li>尽量使用 Anko DSL 来创建视图</li>
+<li>尽量将具有高度复用的一些 UI 组件用自定义 View（Widget） 实现，例如中间带有播放按钮的 ImageView，应该统一实现为一个 VideoThumbnailImageView</li>
+</ul>
+<h3 id="后端"><a href="#后端" class="headerlink" title="后端"></a>后端</h3><ul>
+<li>API 文档必须标明各个属性是否为 Nullable</li>
+</ul>
+<h2 id="架构"><a href="#架构" class="headerlink" title="架构"></a>架构</h2><p>MVP，Flux / Redux。请参考 <strong><a href="https://github.com/nekocode/kotgo" target="_blank" rel="external">Kotgo</a></strong> 框架。</p>
+<h3 id="层次流程"><a href="#层次流程" class="headerlink" title="层次流程"></a>层次流程</h3><ul>
+<li><p><strong><code>View</code> -&gt; <code>Model</code> -&gt; <code>Presenter</code></strong>：<code>View</code> 和高复用性的 <code>Model</code> 同时开发，<code>Presenter</code> 最后开发</p>
+</li>
+<li><p>前期 <code>View</code> 层开发需要用到的数据全部使用 <code>ViewObject</code>，需要什么属性就定义什么属性，以后在 <code>Presenter</code> 层进行 <code>DataObject</code> 到 <code>ViewObject</code> 的 <strong>Convert</strong>（转换）过程。（<code>VO</code> 中可以使用 <code>data: Any</code> 属性携带 <code>DO</code>）</p>
+</li>
+<li><p><code>DO</code> 到 <code>VO</code> 的转化过程请不要在 UI 线程进行操作。（可以在 Presenter 中使用 Rx 的 Map 操作在非主线程调度器上进行转换）</p>
+</li>
+<li><p><strong>所有 <code>VO</code>，<code>DO</code> 只能保存在 Presenter 层内，View 层最多只能保存 <code>VO</code> 的引用！</strong>（另外要注意，Adapter 应当放在 Presenter 层内）</p>
+</li>
+<li><p><code>View</code> 层不能接触 <code>Model</code> 层的任何数据和接口！</p>
+</li>
+<li><p><strong>页面跳转</strong> 放到 <code>Presenter</code> 层中。</p>
+</li>
+<li><p><code>View</code> 和 <code>Presenter</code> 之间是双向依赖，所以通过接口解藕，便于进行 UI Mock 测试，而 <code>Presenter</code> 和 <code>Model</code> 是单向依赖，可以直接编写单元测试来测试 <code>Model</code>。</p>
+</li>
+</ul>
+<h3 id="Flux-的一些思想"><a href="#Flux-的一些思想" class="headerlink" title="Flux 的一些思想"></a>Flux 的一些思想</h3><ul>
+<li><strong>FP 的思想很适合前端</strong>：Rx 在 Android 领域的火爆验证了这一点。（事件流与数据流的概念）</li>
+<li><strong>Pure function</strong>：Function 不影响外部变量 / 不产生副作用，且给定输入，输出不变。</li>
+<li><strong>Map，Reduce</strong>：对数据的流处理，任意流都可以通过 <code>Map&amp;Reduce</code> 加工成任意流。</li>
+</ul>
+<h2 id="Git-协同守则"><a href="#Git-协同守则" class="headerlink" title="Git 协同守则"></a>Git 协同守则</h2><ul>
+<li>拉取 <code>dev</code> 分支到本地 <code>Liveneeq</code> 文件夹</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">mkdir Liveneeq</div><div class="line"><span class="built_in">cd</span> Liveneeq</div><div class="line">git init</div><div class="line">git remote add -t dev <span class="_">-f</span> origin git@git.thecampus.cc:onecampus/liveneeq-android.git</div><div class="line">git checkout -b dev origin/dev</div></pre></td></tr></table></figure>
+<ul>
+<li>每个人建立带下划线的自己全名的分支，例如 <code>_yangfan</code></li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git checkout -b _yangfan</div></pre></td></tr></table></figure>
+<ul>
+<li>在该分支上进行开发，定期进行 Commit（可使用 tmp 前缀来表示临时提交），确保代码在云端</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">git add .</div><div class="line">git commit -m <span class="string">"tmp 3/18 ***"</span></div><div class="line">git push origin _yangfan</div><div class="line"></div><div class="line">git add .</div><div class="line">git commit -m <span class="string">"tmp 3/19 ***"</span></div><div class="line">git push origin _yangfan</div></pre></td></tr></table></figure>
+<ul>
+<li>完成阶段性功能或页面后，使用 <code>rebase</code> 或者 <code>reset</code> 重建 Commit 历史，确保所有 tmp commit 被合并删除</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git rebase -i &lt;COMMIT_HASH&gt;</div><div class="line"><span class="comment"># ...</span></div><div class="line">git rebase --continue</div></pre></td></tr></table></figure>
+<ul>
+<li>需要提交到 <code>dev</code> 分支时，需要针对 <code>dev</code> 在个人分支上进行 Rebase 操作，并处理冲突</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">git fetch</div><div class="line">git rebase origin/dev</div><div class="line"><span class="comment"># ...</span></div></pre></td></tr></table></figure>
+<ul>
+<li>rebase 完成后 <strong>在本机进行构建和测试</strong>，测试通过后使用 -f 参数强制 Push 到远程分支</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">git push <span class="_">-f</span> origin _yangfan</div></pre></td></tr></table></figure>
+<ul>
+<li>在 Gitlab 上提交 Merge Request(/Pull Request) 到 dev 分支，等待 Master 进行 Code Review</li>
+</ul>
+<h3 id="Notice"><a href="#Notice" class="headerlink" title="Notice"></a>Notice</h3><ul>
+<li>每次 Commit 要保证粒度足够细，包含的更改和描述一致，且可编译运行</li>
+<li>提交 PR 前如果确保当前分支在 dev 分支 HEAD 处的话可以不进行 Rebase</li>
+<li>dev 分支将处于 protected 状态，非不得已要执行 force push 的话，要提交通知所有开发成员</li>
+</ul>
+<hr>
+<h1 id="编码准则"><a href="#编码准则" class="headerlink" title="编码准则"></a>编码准则</h1><p>参考并修改自 <a href="https://github.com/futurice/android-best-practices" target="_blank" rel="external">Android-Best-Practices</a> 和 <a href="https://github.com/RxSmart/Link-Android-Guideline/blob/master/Android-Guideline.md" target="_blank" rel="external">Android-Guideline</a>。</p>
+<h2 id="Kotlin-源代码"><a href="#Kotlin-源代码" class="headerlink" title="Kotlin 源代码"></a>Kotlin 源代码</h2><p>对类文件使用 <a href="https://en.wikipedia.org/wiki/CamelCase" target="_blank" rel="external">驼峰命名法</a>。包名使用 <a href="http://docs.oracle.com/javase/tutorial/java/package/namingpkgs.html" target="_blank" rel="external">小写连写</a>，单词较多可以使用 <code>_</code> 分割符。</p>
+<p>Project 中的 Module 尽量缩写，库使用 <code>lib-</code> 作为前缀。</p>
+<h3 id="Property-定义与命名规范"><a href="#Property-定义与命名规范" class="headerlink" title="Property 定义与命名规范"></a>Property 定义与命名规范</h3><p>对 Property 的定义应该放在文件的首位，另外请注意 <strong><a href="http://kotlinlang.org/docs/reference/visibility-modifiers.html" target="_blank" rel="external">Kotlin 可视修饰符和 Java 的不同</a></strong>，并且遵守以下规范：</p>
+<ul>
+<li>要注意 Kotlin 的默认可视修饰符为 <code>public</code></li>
+<li>Kotlin 的 <code>internal</code> 修饰符，可以让目标对象只在同一 Module（IDE 下的 Module） 下可访问（例如创建一个插件 Module 的时候，可以使用 <code>internal</code> 对外隐藏一些实现细节）</li>
+<li>静态常量命名字母全部大写，单词之间用下划线分隔，且必须使用 <code>const val</code> 修饰符</li>
+<li>Android SDK中诸如 <code>SharedPreferences</code>，<code>Bundle</code> 和 <code>Intent</code> 等，都采用 <strong>key-value</strong> 的方式进行赋值，当使用这些组件的时候，<strong>key</strong> 必须被 <code>private const val</code> 所修饰，并以 <code>KEY_</code> 作为前缀。</li>
+<li>Android 下的组件以及控件尽量以 <strong>类型</strong> 的缩写小写字母作为前缀，例如以下一些可选的前缀（可依此类推）：  </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Type</th>
+<th>Prefix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activity</td>
+<td><code>act</code></td>
+</tr>
+<tr>
+<td>Fragment</td>
+<td><code>frg</code></td>
+</tr>
+<tr>
+<td>TextView</td>
+<td><code>tv</code></td>
+</tr>
+<tr>
+<td>EditText</td>
+<td><code>et</code></td>
+</tr>
+<tr>
+<td>Button</td>
+<td><code>btn</code></td>
+</tr>
+<tr>
+<td>RecyclerView</td>
+<td><code>rv</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>示例：</strong><br><figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">internal</span> <span class="class"><span class="keyword">class</span> <span class="title">TestActivity</span>: <span class="type">Activity</span></span>() &#123;</div><div class="line">    compainion <span class="keyword">object</span> &#123;</div><div class="line">        const <span class="keyword">val</span> CONSTANT: <span class="built_in">Int</span> = <span class="number">0</span></div><div class="line">        <span class="keyword">private</span> const <span class="keyword">val</span> KEY_ARG_TITLE = <span class="string">"title"</span></div><div class="line">    &#125;</div><div class="line">    <span class="keyword">val</span> title: String = <span class="string">"Title"</span></div><div class="line">    <span class="keyword">var</span> listSize: <span class="built_in">Int</span>? = <span class="literal">null</span></div><div class="line">    <span class="keyword">private</span> <span class="keyword">var</span> frgHomepage: Fragment? = <span class="literal">null</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h3 id="Kotlin-语言相关"><a href="#Kotlin-语言相关" class="headerlink" title="Kotlin 语言相关"></a>Kotlin 语言相关</h3><ul>
+<li>理解好 Kotlin 中的 <strong><a href="https://kotlinlang.org/docs/reference/functions.html" target="_blank" rel="external">Function 类型</a></strong>，理解 <code>inline</code> 和 <code>infix</code> 修饰符，掌握 Kotlin 中的 <strong><a href="https://kotlinlang.org/docs/reference/extensions.html" target="_blank" rel="external">Extensions</a></strong> 和 <strong><a href="https://kotlinlang.org/docs/reference/type-safe-builders.html" target="_blank" rel="external">DSL 的定义</a></strong>，领悟 Function 在 Kotlin 的地位（第一公民）。</li>
+<li>看完并理解 <strong><a href="https://kotlinlang.org/api/latest/jvm/stdlib/kotlin/" target="_blank" rel="external">stdlib</a></strong>。</li>
+<li><code>ByteArray</code>、<code>ShortArray</code>、<code>IntArray</code> 等并不继承于 <code>Array</code>，它们在 Jvm 中表现为 <code>byte[]</code>… ，所以应该更倾向于选择它们。</li>
+<li>使用 <code>Any</code> 而不是 <code>Object</code>。（注意 Lint 的提示，也会建议使用 <code>Any</code>）</li>
+<li>用好 <code>Pair</code> 和 <code>Triple</code> 来避免某些情况新建类。</li>
+<li>使用好注解：<code>@Deprecated</code>（标注不推荐的对象）、<code>@ReplaceWith</code>（标注能进行替换的代码块）。</li>
+<li>注意好 <code>Throwable</code>、<code>Exception</code> 和 <code>Error</code> 的区别，对于可捕捉的错误应该使用 <code>Exception</code> 而不是 <code>Throwable</code>。</li>
+<li>理解好 <code>apply()</code>、<code>let()</code>、<code>with()</code>、<code>to()</code>、<code>repeat()</code> 的糖用法。</li>
+<li>使用 <code>val localA = A!! // or checkNotNull(A)</code> 将 Nullable 变量转换为 NotNull 类型的 Local Scope 变量。</li>
+<li>Kotlin 中用 <code>if (Boolean) A else B</code> 来取代 Java 中的 <code>?:</code> 语式</li>
+<li>在使用没有 Block 的 if 语句时执行语句必须和对应判断语句在同行内：</li>
+</ul>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (<span class="built_in">Boolean</span>) A <span class="keyword">else</span> B</div><div class="line"></div><div class="line"><span class="keyword">if</span> (<span class="built_in">Boolean</span>) A</div><div class="line"><span class="keyword">else</span> B</div><div class="line"></div><div class="line"><span class="keyword">if</span> (xxx) A</div><div class="line"><span class="keyword">else</span> <span class="keyword">if</span> (xxx) B</div><div class="line"><span class="keyword">else</span> C</div></pre></td></tr></table></figure>
+<ul>
+<li>使用好 Kotlin 中的默认参数：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">data class Test(var A: Boolean = true, var B: String = &quot;&quot;)</div><div class="line">Test()</div><div class="line">Test(False)</div><div class="line">Test(B = &quot;Test&quot;)</div></pre></td></tr></table></figure>
+<h3 id="Log-输出规范"><a href="#Log-输出规范" class="headerlink" title="Log 输出规范"></a>Log 输出规范</h3><p>使用 <code>Log</code> 类打印一些重要的信息对开发者而言是很重要的事情，切记不要使用 <code>Toast</code> 来做信息打印。</p>
+<p>VERBOSE 和 DEBUG 类型的 Log 不应该出现在 Release 版本中，INFORMATION、WARNING 和 ERROR 类型的 Log 可以留下来，因为这些信息的输出能够帮助我们快速地定位问题所在，当然前提是，需要隐藏重要的信息输出，如，用户手机号，邮箱等。</p>
+<p>只在 Debug 环境中输出日志的小技巧：</p>
+<figure class="highlight kotlin"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (BuildConfig.DEBUG) Log.d(TAG, <span class="string">"The value of x is "</span> + x)</div></pre></td></tr></table></figure>
+<h3 id="类成员排序规范"><a href="#类成员排序规范" class="headerlink" title="类成员排序规范"></a>类成员排序规范</h3><p>关于这个并没有硬性要求，不过好的排序方式，能够提高可读性和易学性。这里给出一些排序建议：</p>
+<ol>
+<li>常量</li>
+<li>字段</li>
+<li>构造函数</li>
+<li>被重写的函数（不区分修饰符类型）</li>
+<li>被 <code>private</code> 修饰的函数</li>
+<li>被 <code>public</code> 修饰的函数</li>
+<li>被定义的内部类或者接口</li>
+</ol>
+<h2 id="资源文件（Resources）"><a href="#资源文件（Resources）" class="headerlink" title="资源文件（Resources）"></a>资源文件（Resources）</h2><ul>
+<li>资源等 <code>.xml</code> 文件应该采用 <strong>小写字母_下划线</strong> 的组合形式，并遵循前缀表明类型的习惯，形如 <code>type_name.xml</code>。</li>
+<li><code>res/values</code> 目录下的文件可以任意命名，但前提是该文件能够明确表达职责所属，因为起作用的并不是文件本身，而是内部的标签属性。（例如你可以定义 <code>strings_home.xml</code>、<code>colors_home.xml</code> 之类的）</li>
+</ul>
+<h3 id="Lyout-相关"><a href="#Lyout-相关" class="headerlink" title="Lyout 相关"></a>Lyout 相关</h3><ul>
+<li>布局（Layout）文件命名方式：</li>
+</ul>
+<p>布局文件应该与 Android 组件的命名相匹配，以组件类型作为前缀，并且能够清晰的表达意图所在。基本规则如下：</p>
+<table>
+<thead>
+<tr>
+<th>Component</th>
+<th>Class Name</th>
+<th>Layout Name</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Activity</td>
+<td><code>UserProfileActivity</code></td>
+<td><code>activity_user_profile.xml</code></td>
+</tr>
+<tr>
+<td>Fragment</td>
+<td><code>SignUpFragment</code></td>
+<td><code>fragment_sign_up.xml</code></td>
+</tr>
+<tr>
+<td>Dialog</td>
+<td><code>ChangePasswordDialog</code></td>
+<td><code>dialog_change_password.xml</code></td>
+</tr>
+<tr>
+<td>AdapterView item</td>
+<td>—</td>
+<td><code>item_person.xml</code></td>
+</tr>
+<tr>
+<td>Partial layout</td>
+<td>—</td>
+<td><code>partial_stats_bar.xml</code></td>
+</tr>
+</tbody>
+</table>
+<p>值得一提的是，一些布局文件需要通过 <code>Adapter</code> 填充，如 <code>ListView</code>，<code>Recyclerview</code> 等列表视图，这种场景下，布局的命名应该以 <code>item_</code> 作为前缀。另外还有一种比较常见的情况，一个布局文件作为另一个布局文件的一部分而存在，或者使用了 <code>include</code>，<code>merge</code> 等标签的布局，可以使用 <code>partial_</code>、<code>include_</code> 或者 <code>merge_</code> 作为前缀，这一类布局的命名同样应该清晰的表达其意图。</p>
+<ul>
+<li>Id 命名方式：</li>
+</ul>
+<p>控件 Id 的命名应该以该控件类型的缩写作为前缀，和 <a href="https://github.com/nekocode/nekoblog/blob/master/AndroidDevGuideline.md#property-定义与命名规范" target="_blank" rel="external">代码中的控件名保持一致</a>。</p>
+<p>对于如何排版一个布局文件，请尽量遵循以下规范：</p>
+<ul>
+<li>每个属性独占一行，缩进四个空格</li>
+<li><code>android:id</code> 作为第一个属性存在</li>
+<li>如果存在 <code>style</code> 属性，则紧随 <code>id</code> 之后</li>
+<li>如果不存在 <code>style</code> 属性，则 <code>android:layout_xxx</code> 紧随 <code>id</code> 之后</li>
+<li>当布局中的一个元素不再包含子元素时，另起一行，使用自闭合标签 <code>/&gt;</code>，方便调整和添加新的属性</li>
+<li>善用 IDE 的 Reformat Code 功能，尽量在编辑完 XML 文件后进行格式化</li>
+</ul>
+<p>示例如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line">&lt;?xml version="1.0" encoding="utf-8"?&gt;</div><div class="line"><span class="tag">&lt;<span class="name">LinearLayout</span> <span class="attr">xmlns:android</span>=<span class="string">"http://schemas.android.com/apk/res/android"</span></span></div><div class="line">    <span class="attr">xmlns:tools</span>=<span class="string">"http://schemas.android.com/tools"</span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"match_parent"</span></div><div class="line">    <span class="attr">android:orientation</span>=<span class="string">"vertical"</span></div><div class="line">    &gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">TextView</span></span></div><div class="line">        <span class="attr">android:id</span>=<span class="string">"@+id/tvTitle"</span></div><div class="line">        <span class="attr">style</span>=<span class="string">"@style/FancyText"</span></div><div class="line">        <span class="attr">android:layout_width</span>=<span class="string">"match_parent"</span></div><div class="line">        <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">        <span class="attr">android:layout_alignParentRight</span>=<span class="string">"true"</span></div><div class="line">        <span class="attr">tools:text</span>=<span class="string">"This is title."</span></div><div class="line">        /&gt;</div><div class="line"></div><div class="line">    <span class="tag">&lt;<span class="name">include</span> <span class="attr">layout</span>=<span class="string">"@layout/partial_header"</span> /&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">LinearLayout</span>&gt;</span></div></pre></td></tr></table></figure>
+<ul>
+<li>避免层级冗余的嵌套。</li>
+</ul>
+<p>Layout 结构优化方面，应尽量避免深层次的布局嵌套，这不仅会引发性能瓶颈，还会带来项目维护上的麻烦。在书写布局之前应该对 ViewTree 充分的分析，善用 <a href="http://stackoverflow.com/questions/8834898/what-is-the-purpose-of-androids-merge-tag-in-xml-layouts" target="_blank" rel="external"><code>&lt;merge&gt;</code>标签</a> 减少层级嵌套，或者使用 <a href="http://developer.android.com/intl/zh-cn/tools/help/hierarchy-viewer.html" target="_blank" rel="external">Hierarchy Viewer</a> 等 UI 优化工具对 Layout 进行分析与优化。可参考 <a href="http://developer.android.com/intl/zh-cn/tools/debugging/debugging-ui.html" target="_blank" rel="external">Optimizing Your UI</a> 与 <a href="http://developer.android.com/intl/zh-cn/training/improving-layouts/optimizing-layout.html" target="_blank" rel="external">Optimizing Layout Hierarchies</a>。</p>
+<h3 id="Style、Theme-相关"><a href="#Style、Theme-相关" class="headerlink" title="Style、Theme 相关"></a>Style、Theme 相关</h3><p>Style 与 Theme 的命名统一使用 <a href="https://en.wikipedia.org/wiki/CamelCase" target="_blank" rel="external">驼峰命名法</a>（首字母大写）。使用多个 Style 文件而不是全部写在 <code>styles.cml</code> 里，如：<code>style_home.xml</code>，<code>style_item_details.xml</code>，<code>styles_forms.xml</code> 等。</p>
+<p>几乎每个项目都需要适当的使用 Style 文件，因为对于一个视图来说有一个重复的外观是很常见的。在应用中对于大多数文本内容，最起码你应该有一个通用的 Style文 件，例如：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">name</span>=<span class="string">"ContentText"</span>&gt;</span><span class="xml"></span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:textSize"</span>&gt;</span>@dimen/font_normal<span class="tag">&lt;/<span class="name">item</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">item</span> <span class="attr">name</span>=<span class="string">"android:textColor"</span>&gt;</span>@color/basic_black<span class="tag">&lt;/<span class="name">item</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">style</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>应用到 TextView 中:</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">TextView</span></span></div><div class="line">    <span class="attr">style</span>=<span class="string">"@style/ContentText"</span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">android:text</span>=<span class="string">"@string/price"</span></div><div class="line">    /&gt;</div></pre></td></tr></table></figure>
+<p>你或许需要为按钮控件做同样的事情，不要停止在那里。将一组相关的和重复的属性放到一个通用的 Style 中。</p>
+<p><strong>对于控件的 <code>android:layout_xxx</code> 等属性应该在 Layout 中定义，同时其它属性 <code>android:xxx</code> 应放在 <code>style</code> 中。核心准则是保证 Layout 属性（position, margin, size 等）和 content 属性（text, src 等）在布局文件中，同时将所有的外观细节属性（color, padding, font）放在 Style 文件中。</strong></p>
+<h3 id="使用-Designtime-Attributes（tools-标签）"><a href="#使用-Designtime-Attributes（tools-标签）" class="headerlink" title="使用 Designtime Attributes（tools 标签）"></a>使用 Designtime Attributes（tools 标签）</h3><ul>
+<li>布局预览应使用 <code>tools:xxx</code> 相关属性，避免 <code>android:text</code> 等硬编码的出现，具体可参考 <a href="http://tools.android.com/tips/layout-designtime-attributes" target="_blank" rel="external">Designtime Attributes</a>。示例如下：</li>
+</ul>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">TextView</span></span></div><div class="line">    <span class="attr">android:layout_width</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">android:layout_height</span>=<span class="string">"wrap_content"</span></div><div class="line">    <span class="attr">tools:text</span>=<span class="string">"Home Link"</span></div><div class="line">    /&gt;</div></pre></td></tr></table></figure>
+<h3 id="Drawable-相关"><a href="#Drawable-相关" class="headerlink" title="Drawable 相关"></a>Drawable 相关</h3><ul>
+<li>常规 Drawable（图像）文件命名方式：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Asset Type</th>
+<th>Prefix</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Background</td>
+<td><code>bg_</code></td>
+<td><code>bg_splash.png</code></td>
+</tr>
+<tr>
+<td>Button</td>
+<td><code>btn_</code></td>
+<td><code>btn_send_pressed.9.png</code></td>
+</tr>
+<tr>
+<td>Divider</td>
+<td><code>divider_</code></td>
+<td><code>divider_horizontal.9.png</code></td>
+</tr>
+<tr>
+<td>Icon</td>
+<td><code>ic_</code></td>
+<td><code>ic_star.png</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>常规 icon（图标）文件命名方式：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Asset Type</th>
+<th>Prefix</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Icons</td>
+<td><code>ic_</code></td>
+<td><code>ic_star.png</code></td>
+</tr>
+<tr>
+<td>Launcher icons</td>
+<td><code>ic_launcher</code></td>
+<td><code>ic_launcher_calendar.png</code></td>
+</tr>
+<tr>
+<td>Menu icons and Action Bar icons</td>
+<td><code>ic_menu</code></td>
+<td><code>ic_menu_archive.png</code></td>
+</tr>
+<tr>
+<td>Status bar icons</td>
+<td><code>ic_stat_notify</code></td>
+<td><code>ic_stat_notify_msg.png</code></td>
+</tr>
+<tr>
+<td>Tab icons</td>
+<td><code>ic_tab</code></td>
+<td><code>ic_tab_recent.png</code></td>
+</tr>
+<tr>
+<td>Dialog icons</td>
+<td><code>ic_dialog</code></td>
+<td><code>ic_dialog_info.png</code></td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>常规 selector states（选中状态）文件命名方式：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Suffix</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Normal</td>
+<td><code>_normal</code></td>
+<td><code>btn_order_normal.9.png</code></td>
+</tr>
+<tr>
+<td>Pressed</td>
+<td><code>_pressed</code></td>
+<td><code>btn_order_pressed.9.png</code></td>
+</tr>
+<tr>
+<td>Focused</td>
+<td><code>_focused</code></td>
+<td><code>btn_order_focused.9.png</code></td>
+</tr>
+<tr>
+<td>Disabled</td>
+<td><code>_disabled</code></td>
+<td><code>btn_order_disabled.9.png</code></td>
+</tr>
+<tr>
+<td>Checked</td>
+<td><code>_checked</code></td>
+<td><code>btn_order_checked.9.png</code></td>
+</tr>
+<tr>
+<td>Selected</td>
+<td><code>_selected</code></td>
+<td><code>btn_order_selected.9.png</code></td>
+</tr>
+<tr>
+<td>Hovered</td>
+<td><code>_hovered</code></td>
+<td><code>btn_order_hovered.9.png</code></td>
+</tr>
+<tr>
+<td>Activated</td>
+<td><code>_activated</code></td>
+<td><code>btn_order_activated.9.png</code></td>
+</tr>
+</tbody>
+</table>
+<p>要注意的是，Selector 的一些状态是可以叠加的，所以可以产生 <code>btn_order_disabled_focused.9.png</code> 这类命名。</p>
+<p>永远使用 <a href="https://github.com/inmite/android-selector-chapek" target="_blank" rel="external">android-selector-chapek</a> 这个插件来生成相应的 Selector Drawable XML 文件，而不应该手工创建。</p>
+<h3 id="Color-相关"><a href="#Color-相关" class="headerlink" title="Color 相关"></a>Color 相关</h3><p><code>colors.xml</code> 文件就像个 “调色板”，只映射颜色的 ARGB 值，不应该存在其他类型的数值，不要使用它为不同的按钮来定义 ARGB 值。应该像下面：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></div><div class="line">    <span class="comment">&lt;!-- grayscale --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"white"</span>     &gt;</span>#FFFFFF<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"gray_light"</span>&gt;</span>#DBDBDB<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"gray"</span>      &gt;</span>#939393<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"gray_dark"</span> &gt;</span>#5F5F5F<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"black"</span>     &gt;</span>#323232<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line"></div><div class="line">    <span class="comment">&lt;!-- basic colors --&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"green"</span>     &gt;</span>#27D34D<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"blue"</span>      &gt;</span>#2A91BD<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"orange"</span>    &gt;</span>#FF9D2F<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line">    <span class="tag">&lt;<span class="name">color</span> <span class="attr">name</span>=<span class="string">"red"</span>       &gt;</span>#FF432F<span class="tag">&lt;/<span class="name">color</span>&gt;</span></div><div class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>对同一色调，不同色域进行定义时，像 “brand_primary”、”brand_secondary”、 “brand_negative” 这样的命名也是不错的选择。</p>
+<p>值得一提的是，这样规范的颜色很容易修改或重构，App 一共使用了多少种不同的颜色变会得非常清晰。</p>
+<h3 id="Dimen-相关"><a href="#Dimen-相关" class="headerlink" title="Dimen 相关"></a>Dimen 相关</h3><p>我们应该像对待 <code>colors.xml</code> 一样对待 <code>dimens.xml</code> 文件，与定义颜色调色板无异，也应该定义一个规范字体大小的 <strong>“字号板”</strong>。</p>
+<p>一个很好的建议：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">resources</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- font sizes --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"font_larger"</span>&gt;</span>22sp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"font_large"</span>&gt;</span>18sp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"font_normal"</span>&gt;</span>15sp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"font_small"</span>&gt;</span>12sp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- typical spacing between two views --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"spacing_huge"</span>&gt;</span>40dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"spacing_large"</span>&gt;</span>24dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"spacing_normal"</span>&gt;</span>14dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"spacing_small"</span>&gt;</span>10dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"spacing_tiny"</span>&gt;</span>4dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line"></div><div class="line">	<span class="comment">&lt;!-- typical sizes of views --&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"button_height_tall"</span>&gt;</span>60dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"button_height_normal"</span>&gt;</span>40dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line">	<span class="tag">&lt;<span class="name">dimen</span> <span class="attr">name</span>=<span class="string">"button_height_short"</span>&gt;</span>32dp<span class="tag">&lt;/<span class="name">dimen</span>&gt;</span></div><div class="line"></div><div class="line"><span class="tag">&lt;/<span class="name">resources</span>&gt;</span></div></pre></td></tr></table></figure>
+<p>同样的，在定义 <code>margin</code> 和 <code>padding</code> 时，可以使用 <code>spacing_xxx</code> 作为前缀对其命名，而不是像对待 <code>String</code> 字符串那样直接写值。这样写的好处是，使组织结构和修改风格甚至布局变得非常容易。</p>
+<h3 id="String-相关"><a href="#String-相关" class="headerlink" title="String 相关"></a>String 相关</h3><p>String 命名的前缀应该能够清楚地表达它的功能职责，如，<code>registration_email_hint</code>，<code>registration_name_hint</code>。如果一个 Sting 不属于任何模块，这也就意味着它是通用的，应该遵循以下规范：</p>
+<table>
+<thead>
+<tr>
+<th>Prefix</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>error_</code></td>
+<td>错误提示</td>
+</tr>
+<tr>
+<td><code>msg_</code></td>
+<td>一般信息提示</td>
+</tr>
+<tr>
+<td><code>title_</code></td>
+<td>标题提示，如，Dialog标题</td>
+</tr>
+<tr>
+<td><code>action_</code></td>
+<td>动作提示，如，“保存”，“取消”，“创建”</td>
+</tr>
+</tbody>
+</table>
+</div></article></article></section><footer><div class="social"><a href="mailto:muxuapp@email.com" title="email" class="iconfont icon-email"></a><a href="/atom.xml" title="rss" class="iconfont icon-rss"></a></div><div class="copyright"><p class="power">Powered by <a href="https://hexo.io/">Hexo</a> and Theme by <a href="https://github.com/ahonn/hexo-theme-even"> Even</a></p><p class="since">&copy;2015-2017<span class="heart"><i class="iconfont icon-heart"></i></span><span class="author">muxu</span></p></div><div id="back2top"><i class="iconfont icon-up"></i></div></footer></div><script src="/js/zepto.min.js"></script><script src="/js/theme.js"></script></body></html>

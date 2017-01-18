@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>Muxu</title>
+  <subtitle>一蓑烟雨任平生，也无风雨也无晴</subtitle>
+  <link href="/atom.xml" rel="self"/>
+  
+  <link href="http://pybeta.com/"/>
+  <updated>2017-01-17T15:43:41.000Z</updated>
+  <id>http://pybeta.com/</id>
+  
+  <author>
+    <name>muxu</name>
+    
+  </author>
+  
+  <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>了解Spring Web应用程序体系结构：经典方式</title>
+    <link href="http://pybeta.com/2017/01/spring-web-application-architecture/"/>
+    <id>http://pybeta.com/2017/01/spring-web-application-architecture/</id>
+    <published>2017-01-17T03:29:45.000Z</published>
+    <updated>2017-01-17T15:43:41.000Z</updated>
+    
+    <content type="html"><![CDATA[<p>每个开发人员必须理解的两件事：</p>
+<ol>
+<li>框架设计是必要的。</li>
+<li>花哨的架构图并不能真正的描述应用程序的架构。</li>
+</ol>
+<p>真正的架构是从开发人员编写的代码中找到的；如果在开始时我们不设计应用程序的架构，我们最终会得到一个具有多个架构的应用程序。</p>
+<p>这是否意味着开发人员应该听从架构师呢？</p>
+<p>没有。<a href="https://www.petrikainulainen.net/software-development/processes/we-need-more-foremen/" target="_blank" rel="external">框架设计是太重要了，不能仅仅是架构师的事</a>，这就要求开发人员也必须擅长进行架构设计。</p>
+<a id="more"></a>
+<h2 id="良好架构的两个原则"><a href="#良好架构的两个原则" class="headerlink" title="良好架构的两个原则"></a>良好架构的两个原则</h2><blockquote>
+<p>软件架构是软件系统的高层次结构，创建这种高层次结构的原则，以及这种结构的文档。</p>
+</blockquote>
+<p>尽管历史经验能帮助我们创建更好的架构，但是架构设计的基本原则实际上相当简单。我们要做的是遵循这两个原则：</p>
+<h3 id="1-Separation-of-Concerns-SoC"><a href="#1-Separation-of-Concerns-SoC" class="headerlink" title="1. Separation of Concerns (SoC)"></a>1. Separation of Concerns (SoC)</h3><p><a href="https://en.wikipedia.org/wiki/Separation_of_concerns" target="_blank" rel="external">关注点分离（SoC）</a>的原理分离规定如下：</p>
+<blockquote>
+<p>关注点分离（SOC）是一种设计原则，将计算机程序划分成不同的部分，这样每一部分都有一个单独的关注点.。</p>
+</blockquote>
+<p>这意味着我们应该</p>
+<ol>
+<li>确定我们需要照顾的”<strong>关注点</strong>“。</li>
+<li>该如何去解决这些关注点。</li>
+</ol>
+<p>换句话说，这个原则将帮助我们设计所需的层级及每层的责任。</p>
+<blockquote>
+<p> 说白了还是“高内聚，低耦合”。</p>
+</blockquote>
+<h3 id="2-Keep-It-Simple-Stupid-KISS"><a href="#2-Keep-It-Simple-Stupid-KISS" class="headerlink" title="2. Keep It Simple, Stupid (KISS)"></a>2. Keep It Simple, Stupid (KISS)</h3><p>在<a href="https://en.wikipedia.org/wiki/KISS_principle" target="_blank" rel="external">KISS</a>原则规定：</p>
+<blockquote>
+<p>大多数系统工作最好，如果他们保持简单，而不是复杂；因此简单性应该是设计的关键目标，并且应避免不必要的复杂性。</p>
+</blockquote>
+<p>这个原则是理性的声音。它提醒我们，每一层都有代价，如果我们创建一个复杂的架构，有太多的层，代价会太高。</p>
+<p>换句话说，我们不应该设计一个这样的结构：</p>
+<p><img src="https://www.petrikainulainen.net/wp-content/uploads/footprints2.jpg" alt="资料来源：Geek And Poke：Footprints  -  CC 3.0许可"></p>
+<p>我认为约翰·朱迪，马克和大卫是有罪的精神自慰。他们遵循分离关注原则，但他们忘记了最小化其架构的复杂性。可悲的是，这是一个常见的错误，它的代价比较高：</p>
+<ol>
+<li>添加新功能，需要花费更多的时间；因为我们必须通过每一层传输信息。</li>
+<li>维护这样的应用程序几乎是不可能的，因为没有人能真正理解这样的架构。</li>
+</ol>
+<p>这产生了一个明显的问题：</p>
+<p><strong>什么样的架构可以为我们服务？</strong></p>
+<h2 id="三层架构设计应该足够为每个人"><a href="#三层架构设计应该足够为每个人" class="headerlink" title="三层架构设计应该足够为每个人"></a>三层架构设计应该足够为每个人</h2><p>如果考虑一个Web应用程序的职责，我们注意到一个Web应用程序有以下“关注”：</p>
+<ul>
+<li>它需要处理用户的输入并将正确的响应返回给用户。</li>
+<li>它需要一个异常处理机制，向用户提供合理的错误消息。</li>
+<li>它需要一个事务管理策略。</li>
+<li>它需要处理认证和授权。</li>
+<li>它需要实现应用程序的业务逻辑。</li>
+<li>它需要与使用的数据存储和其他外部资源进行通信。</li>
+</ul>
+<p>我们可以只使用三层来满足所有这些关注。这些层是：</p>
+<ul>
+<li><strong>Web层</strong>是一个Web应用程序的最上层。它负责处理用户的输入并将正确的响应返回给用户。处理其他层抛出的异常并向用户反映错误的发生；对用户进行认证，拒绝未认证的用户访问。</li>
+<li><strong>Service层</strong>Web 应用的中间层。它应该组织业务逻辑，为 Web 层提供服务；使得所有服务都是事务性的；负责用户的授权。</li>
+<li><strong>Repository层</strong>Web 应用的最底层。它负责操纵数据库，以实现对数据库的增删改查。</li>
+</ul>
+<blockquote>
+<p>属于特定层的组件可以使用属于同一层或其下面的层的组件。</p>
+</blockquote>
+<p>经典Spring Web应用程序的架构如下所示：</p>
+<p><img src="https://www.petrikainulainen.net/wp-content/uploads/spring-web-application-layers.png" alt=""></p>
+<p>我们要做的下一件事就是设计每一层的接口，而这正是我们碰到类似的术语：数据传输对象（DTO）和领域模型（Domain Model）。这些术语描述如下：</p>
+<ul>
+<li><strong>数据传输对象</strong>是一个对象，它仅仅是一个简单的数据容器，它用来传输用户可见的数据，屏蔽了 Web 应用的内部实现。</li>
+<li><strong>领域模型</strong>由三个不同的对象：<ul>
+<li><strong>域名服务</strong>是一个无状态类，它提供了相关的一个领域概念，但不是一个实体或值对象的“自然”的一部分业务。</li>
+<li><strong>实体</strong>是由它的身份通过其整个生命周期保持不变定义的对象。</li>
+<li><strong>值对象</strong>描述的属性或一件事，而这些对象没有自己的身份或生命周期。值对象的生命周期绑定到实体的生命周期。</li>
+</ul>
+</li>
+</ul>
+<p>现在我们知道这些术语是什么意思，我们可以继续并设计每个层的接口。</p>
+<ul>
+<li><strong>Web层</strong>应该只处理DTO。</li>
+<li><strong>Service层</strong>将DTO作为方法参数。它可以处理领域模型对象，但它只能将DTO返回到Web层。</li>
+<li><strong>Repository层</strong>将实体作为方法参数，并返回实体。</li>
+</ul>
+<p>这提出了一个非常重要的问题：</p>
+<blockquote>
+<p>我们真的需要数据传输对象吗？为什么我们不能将领域模型直接返回给Web层？</p>
+</blockquote>
+<p>主要是因为下面两个原因：</p>
+<ol>
+<li>领域模型指定了我们的应用程序的内部模型。如果我们将这个模型暴露给外部世界，客户端将必须知道如何使用它。换句话说，我们的应用程序的客户端将不得不处理不属于他们的东西。如果我们使用DTO，我们可以从我们的应用程序的客户端隐藏这个模型，并提供一个更容易和更清洁的API。</li>
+<li>如果我们将我们的领域模型暴露给外部世界，我们不能改变它，而不打破依赖于它的其他东西。如果我们使用DTO，我们可以改变我们的域模型，只要我们不对DTO做任何更改。</li>
+</ol>
+<p>经典Spring Web应用程序的“最终”体系结构如下所示：</p>
+<p><img src="https://www.petrikainulainen.net/wp-content/uploads/spring-web-app-architecture.png" alt=""></p>
+<h2 id="有许多未解答的问题"><a href="#有许多未解答的问题" class="headerlink" title="有许多未解答的问题"></a>有许多未解答的问题</h2><p>本文描述了Spring Web应用程序的经典架构，但它不提供任何有关真正问题的答案，例如：</p>
+<ul>
+<li>为什么X层负责关注Y？</li>
+<li>我们的应用程序分层能否超过三层，或者少于三层？</li>
+<li>我们应该如何设计每个层的内部结构？</li>
+<li>我们真的需要图层吗？</li>
+</ul>
+<p>其实原因很简单：</p>
+<p><strong>我们必须学会走路之前，我们就可以运行</strong>。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      &lt;p&gt;每个开发人员必须理解的两件事：&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;框架设计是必要的。&lt;/li&gt;
+&lt;li&gt;花哨的架构图并不能真正的描述应用程序的架构。&lt;/li&gt;
+&lt;/ol&gt;
+&lt;p&gt;真正的架构是从开发人员编写的代码中找到的；如果在开始时我们不设计应用程序的架构，我们最终会得到一个具有多个架构的应用程序。&lt;/p&gt;
+&lt;p&gt;这是否意味着开发人员应该听从架构师呢？&lt;/p&gt;
+&lt;p&gt;没有。&lt;a href=&quot;https://www.petrikainulainen.net/software-development/processes/we-need-more-foremen/&quot;&gt;框架设计是太重要了，不能仅仅是架构师的事&lt;/a&gt;，这就要求开发人员也必须擅长进行架构设计。&lt;/p&gt;
+    
+    </summary>
+    
+    
+  </entry>
+  
+</feed>

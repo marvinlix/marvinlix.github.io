@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="author" content="muxu"><meta name="description" content="Maven的依赖规则依赖类型Maven的依赖类型有五种，分别是：compile，test，provided，runtime，system。compile（默认使用）：编译依赖范围，编译、测试、运行都生效；test：测试依赖范围，只在测试的classpath有效，比如我们常用"><title>maven-dependency · Muxu</title><link rel="icon" href="/favicon.ico"><link rel="canonical" href="http://pybeta.com/wikis/maven-dependency.html"><link rel="alternate" href="/atom.xml" title="Muxu"><link rel="stylesheet" href="/css/style.css"></head><body><div id="main"><header><a href="/." class="logo">Muxu</a><ul class="nav"><li class="nav-link"><a href="/" target="_self">Home</a></li><li class="nav-link"><a href="/archives/" target="_self">Archives</a></li><li class="nav-link"><a href="/wikis/" target="_self">Wikis</a></li><li class="nav-link"><a href="/about/" target="_self">About</a></li></ul></header><section id="container"><article class="post"><article class="post-block"><div class="post-content"><h1 id="Maven的依赖规则"><a href="#Maven的依赖规则" class="headerlink" title="Maven的依赖规则"></a>Maven的依赖规则</h1><h2 id="依赖类型"><a href="#依赖类型" class="headerlink" title="依赖类型"></a>依赖类型</h2><p>Maven的依赖类型有五种，分别是：compile，test，provided，runtime，system。</p>
+<ul>
+<li>compile（默认使用）：编译依赖范围，编译、测试、运行都生效；</li>
+<li>test：测试依赖范围，只在测试的classpath有效，比如我们常用的JUnit；</li>
+<li>provided：只对编译和测试有效，对运行无效，常用于容器提供了的运行环境；</li>
+<li>runtime：运行时依赖范围，比如JDBC驱动，编译和测试时不需要，只需要使用JDK提供的JDBC接口；</li>
+<li>system：系统依赖范围，依赖Maven仓库以外的依赖。</li>
+</ul>
+<h2 id="依赖传递规则"><a href="#依赖传递规则" class="headerlink" title="依赖传递规则"></a>依赖传递规则</h2><p>平时引了新包之后会经常遇见报错缺少某个类的情况，一般就是包所依赖的jar包与之前的冲突了。这个就是由于maven的依赖传递引起的，依赖传递遵循如下规则。</p>
+<h3 id="传递性依赖范围"><a href="#传递性依赖范围" class="headerlink" title="传递性依赖范围"></a>传递性依赖范围</h3><p>假设A依赖B，B依赖C，那么A对于B就是第一直接依赖，B对于C就是第二直接依赖，A对于C是传递性间接依赖，而传递性依赖的范围是由第一直接依赖和第二直接依赖的范围决定的。<br>如图，左一列表示第一直接依赖范围，上一列是第二直接依赖范围，中间交叉单元格表示传递性依赖范围。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>compile</th>
+<th>test</th>
+<th>provided</th>
+<th>runtime</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>compile</td>
+<td>compile</td>
+<td>-</td>
+<td>-</td>
+<td>runtime</td>
+</tr>
+<tr>
+<td>test</td>
+<td>test</td>
+<td>-</td>
+<td>-</td>
+<td>test</td>
+</tr>
+<tr>
+<td>provided</td>
+<td>provided</td>
+<td>-</td>
+<td>provided</td>
+<td>provided</td>
+</tr>
+<tr>
+<td>runtime</td>
+<td>runtime</td>
+<td>-</td>
+<td>-</td>
+<td>runtime</td>
+</tr>
+</tbody>
+</table>
+<h3 id="依赖仲裁的原则"><a href="#依赖仲裁的原则" class="headerlink" title="依赖仲裁的原则"></a>依赖仲裁的原则</h3><h4 id="第一原则：路径短优先原则"><a href="#第一原则：路径短优先原则" class="headerlink" title="第一原则：路径短优先原则"></a>第一原则：路径短优先原则</h4><ul>
+<li>路径1是：A-&gt;B-&gt;C-&gt;D(version1.0)</li>
+<li>路径2是：A-&gt;E-&gt;D(version2.0)</li>
+</ul>
+<p>由于路径2的长度小于路径1，所以结果就是A会传递性依赖D(version2.0)</p>
+<h4 id="第二原则：先声明者优先原则-（maven版本-gt-2-1-0有效）"><a href="#第二原则：先声明者优先原则-（maven版本-gt-2-1-0有效）" class="headerlink" title="第二原则：先声明者优先原则 （maven版本&gt;=2.1.0有效）"></a>第二原则：先声明者优先原则 （maven版本&gt;=2.1.0有效）</h4><p>当路径长度相同时候，就要使用第二原则。</p>
+<ul>
+<li>路径1不变依然是：A-&gt;B-&gt;C-&gt;D(version1.0)</li>
+<li>路径2是：A-&gt;E-&gt;F-&gt;D(version2.0)</li>
+</ul>
+<p>由于路径1在路径2前面声明，所以结果就是A会传递性依赖D(version1.0)</p>
+</div></article></article></section><footer><div class="social"><a href="mailto:muxuapp@email.com" title="email" class="iconfont icon-email"></a><a href="/atom.xml" title="rss" class="iconfont icon-rss"></a></div><div class="copyright"><p class="power">Powered by <a href="https://hexo.io/">Hexo</a> and Theme by <a href="https://github.com/ahonn/hexo-theme-even"> Even</a></p><p class="since">&copy;2015-2017<span class="heart"><i class="iconfont icon-heart"></i></span><span class="author">muxu</span></p></div><div id="back2top"><i class="iconfont icon-up"></i></div></footer></div><script src="/js/zepto.min.js"></script><script src="/js/theme.js"></script></body></html>
