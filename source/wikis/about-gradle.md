@@ -1,10 +1,8 @@
-title: Gradle配置备忘
+title: Android开发中常用gradle配置
 date: 2016-06-30 11:53:47
-tags: android
-description: Android开发中常用gradle配置
 ---
 
-## Android Gradle配置
+## Android Gradle常用配置
 
 ### 编译加速
 
@@ -31,8 +29,6 @@ dexOptions {
     javaMaxHeapSize "4g"
 }
 ```
-
-<!-- more -->
 
 ### 只支持特定abi
 
